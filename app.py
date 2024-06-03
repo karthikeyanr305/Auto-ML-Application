@@ -30,6 +30,7 @@ import plotly.graph_objects as go
 import plotly.express as px
 from plotly.subplots import make_subplots
 
+print("ENtering applicaton")
 st.set_option('deprecation.showPyplotGlobalUse', False)
 
 st.set_page_config(layout="wide")
