@@ -37,9 +37,9 @@ def plot_shap(model, X_train, X_test, model_name):
 
     # Convert SHAP values to DataFrame
     shap_df = None
-    if model_name == 'LR':
+    if model_name in ['LR', 'XG']:
         shap_df = pd.DataFrame(shap_values.values, columns=X_test.columns)
-    else:
+    elif model_name in ['RF']:
         shap_df = pd.DataFrame(shap_values.values[:,:,1], columns=X_test.columns)
 
     

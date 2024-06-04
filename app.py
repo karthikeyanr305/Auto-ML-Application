@@ -638,7 +638,8 @@ def basicEDA2(dataset0):
 
             st.write(f"<p style='color:#0FF900'><strong>Training with XGBoost!</strong></p>", unsafe_allow_html=True)
             
-            XGBoost(st.session_state.X, st.session_state.y, st.session_state.isSMOTE)
+            model, X, y, X_train, X_test, y_train, y_test = XGBoost(st.session_state.X, st.session_state.y, st.session_state.isSMOTE)
+            visualize_model(model, X, y, X_train, X_test, y_train, y_test, 'XG')
 
         
         elif model_option == "Naive Bayes":
