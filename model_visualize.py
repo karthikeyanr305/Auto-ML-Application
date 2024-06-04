@@ -22,15 +22,25 @@ import shap
 import matplotlib.pyplot as plt
 from sklearn.metrics import precision_recall_curve, roc_curve, roc_auc_score, confusion_matrix, f1_score
 
-def plot_shap(model, X_train, X_test):
+def plot_shap(model, X_train, X_test, model_name):
     # Initialize the SHAP Explainer
-    explainer = shap.Explainer(model, X_train)
+    
+    explainer = None
+    
+    if model_name == 'LR':
+        explainer = shap.Explainer(model, X_train)
+    else:
+        explainer = shap.TreeExplainer(model)
 
     # Compute SHAP values for the test set
     shap_values = explainer(X_test)
 
     # Convert SHAP values to DataFrame
-    shap_df = pd.DataFrame(shap_values.values, columns=X_test.columns)
+    shap_df = None
+    if model_name == 'LR':
+        shap_df = pd.DataFrame(shap_values.values, columns=X_test.columns)
+    else:
+        shap_df = pd.DataFrame(shap_values.values[:,:,1], columns=X_test.columns)
 
     
     # Calculate mean absolute SHAP values
@@ -149,24 +159,24 @@ def plot_confusion_matrix(cm):
     st.plotly_chart(fig_cm, use_container_width=True)
 
 
-def visualize_lr(LR, X, y, X_train, X_test, y_train, y_test):
+def visualize_model(model, X, y, X_train, X_test, y_train, y_test, model_name):
 
-    LR_pred = LR.predict(X_test)
-    classification_report_str = classification_report(y_test, LR_pred)
-    accuracy_lr = accuracy_score(y_test, LR_pred)
-    precision_lr = precision_score(y_test, LR_pred)
-    recall_lr = recall_score(y_test, LR_pred)
+    model_pred = model.predict(X_test)
+    classification_report_str = classification_report(y_test, model_pred)
+    accuracy_model = accuracy_score(y_test, model_pred)
+    precision_model = precision_score(y_test, model_pred)
+    recall_model = recall_score(y_test, model_pred)
     # F1 Score: The weighted average of Precision and Recall.
-    f1_lr = f1_score(y_test, LR_pred)
+    f1_model = f1_score(y_test, model_pred)
 
     st.markdown("<h3 style='text-align: center;color: #5fb4fb;'><u>METRICS</u></h3>", unsafe_allow_html=True)
     #st.text(classification_report_str)
 
     metric1, metric2, metric3, metric4 = st.columns(4)
-    metric1.metric("Accuracy", f"{accuracy_lr:.2f}")
-    metric2.metric("Precision", f"{precision_lr:.2f}")
-    metric3.metric(" Recall", f"{recall_lr:.2f}")
-    metric4.metric("F-1 Score", f"{f1_lr:.2f}")
+    metric1.metric("Accuracy", f"{accuracy_model:.2f}")
+    metric2.metric("Precision", f"{precision_model:.2f}")
+    metric3.metric(" Recall", f"{recall_model:.2f}")
+    metric4.metric("F-1 Score", f"{f1_model:.2f}")
 
     st.markdown('<hr style="border-top: 1px solid; width: 75%; margin: 0 auto;">', unsafe_allow_html=True)
 
@@ -175,7 +185,7 @@ def visualize_lr(LR, X, y, X_train, X_test, y_train, y_test):
     st.markdown("<h3 style='text-align: center;color: #5fb4fb;'><u>PLOTS</u></h3>", unsafe_allow_html=True)
 
     #Histogram of Scores
-    y_score = LR.predict_proba(X)[:, 1]
+    y_score = model.predict_proba(X)[:, 1]
 
     # AUC ROC 
     fpr, tpr, thresholds = roc_curve(y, y_score)
@@ -184,14 +194,15 @@ def visualize_lr(LR, X, y, X_train, X_test, y_train, y_test):
     precision, recall, thresholds2 = precision_recall_curve(y, y_score)
 
     # Confusion Matrix
-    cm = confusion_matrix(y_test, LR_pred)
+    cm = confusion_matrix(y_test, model_pred)
 
     top_left, top_right = st.columns(2)
     mid_left, mid_right = st.columns(2)
     bottom_left, bottom_right  = st.columns(2)
 
     with top_left:
-        plot_shap(LR, X_train, X_test)
+        plot_shap(model, X_train, X_test, model_name)
+        #st.write("block for shap")
 
     with top_right:
         plot_hist_score(y, y_score)

@@ -22,7 +22,7 @@ import shap
 import matplotlib.pyplot as plt
 from sklearn.metrics import precision_recall_curve, roc_curve, roc_auc_score, confusion_matrix, f1_score
 
-
+'''
 def plot_shap(model, X_train, X_test):
     # Initialize the SHAP Explainer
     explainer = shap.Explainer(model, X_train)
@@ -147,7 +147,7 @@ def plot_confusion_matrix(cm):
 
     # Show the plot
     #fig_cm.show()
-    st.plotly_chart(fig_cm, use_container_width=True)
+    st.plotly_chart(fig_cm, use_container_width=True)'''
 
 def logisticRegression(X, y, isSMOTE):
     #st.write("Entered logisticRegression")

@@ -14,28 +14,35 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, precision_score, recall_score, classification_report, roc_curve, roc_auc_score, confusion_matrix
 from sklearn.metrics import precision_recall_curve
 import joblib
-def randomForestClassifier(X, y):
 
-     #perform SMOTE on dataset
-    from imblearn.over_sampling import SMOTE
-    import matplotlib.pyplot as plt
-    from sklearn.metrics import accuracy_score, precision_score, recall_score, classification_report, roc_curve, roc_auc_score, confusion_matrix
+ #perform SMOTE on dataset
+from imblearn.over_sampling import SMOTE
+import matplotlib.pyplot as plt
+from sklearn.metrics import accuracy_score, precision_score, recall_score, classification_report, roc_curve, roc_auc_score, confusion_matrix
 
-    smt = SMOTE(random_state=20)
-    X_resampled, Y_resampled = smt.fit_resample(X, y)
-    X_resampled = pd.DataFrame(X_resampled, columns = list(X.columns))
-    X_train_smote, X_test_smote, y_train_smote, y_test_smote = train_test_split(X_resampled, Y_resampled, test_size=0.20, random_state=20)
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import classification_report, accuracy_score, precision_score, recall_score
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=20, shuffle=True)
+def randomForestClassifier(X, y, isSMOTE):
 
-    from sklearn.ensemble import RandomForestClassifier
-    from sklearn.metrics import classification_report, accuracy_score, precision_score, recall_score
+    X_train, X_test, y_train, y_test = None, None, None, None
+    
+    if isSMOTE:
+        smt = SMOTE(random_state=20)
+        X_resampled, Y_resampled = smt.fit_resample(X, y)
+        X_resampled = pd.DataFrame(X_resampled, columns = list(X.columns))
+        X_train, X_test, y_train, y_test = train_test_split(X_resampled, Y_resampled, test_size=0.20, random_state=20, stratify= Y_resampled)
+
+    else:
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=20, shuffle=True, stratify= y)
+
+    
 
     rm = RandomForestClassifier(n_estimators=10, max_depth=15, criterion="gini", min_samples_split=10)
     rm.fit(X_train, y_train)
     joblib.dump(rm,"models/rm.joblib")
 
-    rm_pred = rm.predict(X_test)
+    '''rm_pred = rm.predict(X_test)
 
     st.markdown("<h2 style='text-align: center;color: #5fb4fb;'><u>CLASSIFICATION REPORT</u></h2>", unsafe_allow_html=True)
 
@@ -58,7 +65,14 @@ def randomForestClassifier(X, y):
 
     rm = RandomForestClassifier(n_estimators=10, max_depth=15, criterion="gini", min_samples_split=10)
     rm.fit(X_train, y_train)
-    joblib.dump(rm,"models/rm.joblib")
+    joblib.dump(rm,"models/rm.joblib")'''
+
+
+    return rm, X, y, X_train, X_test, y_train, y_test
+
+
+
+def old_code():
 
     rm_pred = rm.predict(X_test)
 

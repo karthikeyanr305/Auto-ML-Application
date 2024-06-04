@@ -17,7 +17,7 @@ import time
 
 #import models:
 from clean_auto import clean_auto
-from model_visualize import visualize_lr
+from model_visualize import visualize_model
 from model_files.logisticRegression import logisticRegression
 from model_files.decisionTree import decisionTree
 from model_files.randomForestClassifier import randomForestClassifier
@@ -612,7 +612,7 @@ def basicEDA2(dataset0):
             st.write(f"<p style='color:#0FF900'><strong>Training with Logistic Regression!</strong></p>", unsafe_allow_html=True)
             
             model, X, y, X_train, X_test, y_train, y_test = logisticRegression(st.session_state.X, st.session_state.y, st.session_state.isSMOTE)
-            visualize_lr(model, X, y, X_train, X_test, y_train, y_test)
+            visualize_model(model, X, y, X_train, X_test, y_train, y_test, 'LR')
 
 
         elif model_option == "Decision Tree":
@@ -625,7 +625,8 @@ def basicEDA2(dataset0):
             
             st.write(f"<p style='color:#0FF900'><strong>Training with Random Forest Classifier!</strong></p>", unsafe_allow_html=True)
         
-            randomForestClassifier(st.session_state.X, st.session_state.y, st.session_state.isSMOTE)
+            model, X, y, X_train, X_test, y_train, y_test = randomForestClassifier(st.session_state.X, st.session_state.y, st.session_state.isSMOTE)
+            visualize_model(model, X, y, X_train, X_test, y_train, y_test, 'RF')
 
         elif model_option == "Ada Boost":
             
@@ -673,7 +674,7 @@ def app():
         basicEDA2(dataset)
 
 
-    elif data_option == "Upload Dataset":
+    elif data_option == "Upload Dataset - CSV":
         st.markdown(" Feature releasing soon! Please choose from other options!")
         '''st.markdown("<h6 style='text-align: center;'>Upload your dataset here!</h6>", unsafe_allow_html=True)
 
